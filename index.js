@@ -37,7 +37,7 @@ const upload = multer({ storage });
 
 app.use(express.json());
 app.use(cors({
-  origin: ['https://bogdanova-blog.vercel.app']
+  origin: ['https://bogdanova-blog.vercel.app/', 'http://localhost:3000/']
 }));
 app.use('/uploads', express.static('uploads'));
 
