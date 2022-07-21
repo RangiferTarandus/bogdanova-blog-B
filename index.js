@@ -19,7 +19,12 @@ mongoose
   .then(() => console.log('DB ok'))
   .catch((err) => console.log('DB error', err));
 
+
+
 const app = express();
+app.use(cors());
+
+
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
@@ -38,13 +43,16 @@ const upload = multer({ storage });
 app.use(express.json());
 
 
-app.use(cors());
+const  corsOptions = {
+  origin: 'https://bogdanova-blog-rangifertarandus.vercel.app/',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 
 
 app.use('/uploads', express.static('uploads'));
 
-app.post('/auth/login', loginValidation, handleValidationErrors, UserController.login);
+app.post('/auth/login', loginValidation, cors(corsOptions), handleValidationErrors, UserController.login);
 app.post('/auth/register', registerValidation, handleValidationErrors, UserController.register);
 app.get('/auth/me', checkAuth, UserController.getMe);
 
@@ -56,8 +64,8 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
 
 app.get('/tags', PostController.getLastTags);
 
-app.get('/posts', PostController.getAll);
-app.get('/posts/tags', PostController.getLastTags);
+app.get('/posts', cors(corsOptions), PostController.getAll);
+app.get('/posts/tags', cors(corsOptions), PostController.getLastTags);
 app.get('/posts/:id', PostController.getOne);
 app.post('/posts', checkAuth, postCreateValidation, handleValidationErrors, PostController.create);
 app.delete('/posts/:id', checkAuth, PostController.remove);
